@@ -1,0 +1,22 @@
+url: https://YOUR_GITHUB_USERNAME.github.io/CGMmfpt/
+template:
+  bootstrap: 5
+reference:
+  - title: Main workflow
+    contents:
+      - fit_emission_templates
+      - estimate_hmm_mfpt
+      - estimate_empirical_mfpt
+  - title: Individual fits and calculations
+    contents:
+      - fit_hmm_cgm
+      - fit_empirical_cgm
+      - mfpt
+      - transition_counts
+      - emission_log_scores
+      - assign_cgm_states
+  - title: Supporting tools
+    contents:
+      - simulate_cgm_data
+      - starts_with("print.")
+      - starts_with("summary.")

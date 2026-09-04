@@ -1,0 +1,34 @@
+Package: CGMmfpt
+Type: Package
+Title: Mean First-Passage Time Methods for Continuous Glucose Monitoring
+Version: 0.1.0
+Authors@R: c(
+    person("Yuanzhi", "Yu", role = "aut"),
+    person("Margaret M.", "Banker", role = "aut"),
+    person("Denise M.", "Scholtens", email = "dscholtens@northwestern.edu",
+           role = c("aut", "cre"))
+  )
+Description: Fits empirical three-state transition models and hidden Markov
+    models with beta-uniform mixture emissions to continuous glucose monitoring
+    data. Adjacent hidden-state supports may overlap around prespecified or
+    data-driven cutoffs. Participant-level transition matrices are summarized
+    by mean first-passage time to a target state.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Depends:
+    R (>= 4.1.0)
+Imports:
+    Rcpp,
+    stats,
+    utils
+LinkingTo:
+    Rcpp
+Suggests:
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0)
+VignetteBuilder: knitr
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.1
+Config/testthat/edition: 3
+SystemRequirements: C++11
