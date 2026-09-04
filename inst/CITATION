@@ -1,0 +1,11 @@
+bibentry(
+  bibtype = "Manual",
+  title = "CGMmfpt: Mean First-Passage Time Methods for Continuous Glucose Monitoring",
+  author = c(
+    person("Yuanzhi", "Yu"),
+    person("Margaret M.", "Banker"),
+    person("Denise M.", "Scholtens")
+  ),
+  year = "2026",
+  note = "R package version 0.1.0"
+)

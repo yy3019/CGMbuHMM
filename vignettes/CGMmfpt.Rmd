@@ -1,0 +1,121 @@
+---
+title: "Estimating CGM Mean First-Passage Times"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Estimating CGM Mean First-Passage Times}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+`CGMmfpt` estimates the time required for a three-state glucose process to
+first return to its middle state. The empirical method uses hard state
+assignments. The HMM uses beta-uniform mixture emissions with overlapping
+supports around the two state boundaries.
+
+## Synthetic data
+
+The package's example generator produces synthetic data and does not reproduce
+the study dataset or manuscript results.
+
+```{r data}
+library(CGMmfpt)
+
+cgm <- simulate_cgm_data(
+  n_participants = 4,
+  n_per_period = 72,
+  seed = 11
+)
+head(cgm)
+```
+
+## Pooled emission templates
+
+Emission distributions are estimated from a reference sample and then held
+fixed in participant-level HMMs. Here, the baseline observations are pooled
+within age group.
+
+```{r templates}
+baseline <- cgm[cgm$period == "baseline", ]
+cutoffs <- list(adults = c(70, 180), children = c(70, 180))
+
+templates <- fit_emission_templates(
+  baseline,
+  glucose = "glucose",
+  stratum = "age_group",
+  cutoffs = cutoffs,
+  overlap = 10,
+  min_state_n = 5
+)
+summary(templates)
+```
+
+The `overlap` argument is the half-width in mg/dL on either side of a cutoff.
+Within each overlap, normalized baseline prevalences weight the two adjacent
+emission scores.
+
+## HMM estimates
+
+```{r hmm}
+hmm_results <- estimate_hmm_mfpt(
+  cgm,
+  templates,
+  id = "participant_id",
+  time = "timestamp",
+  glucose = "glucose",
+  group = c("period", "treatment"),
+  stratum = "age_group",
+  min_obs = 40,
+  max_iter = 30
+)
+hmm_results
+```
+
+The HMM is fitted separately to each participant-period series. Gaps longer
+than six minutes begin new segments by default. Emission parameters remain
+fixed; the segment-start probabilities and transition matrix are estimated by
+Baum-Welch.
+
+## Empirical estimates
+
+```{r empirical}
+empirical_results <- estimate_empirical_mfpt(
+  cgm,
+  id = "participant_id",
+  time = "timestamp",
+  glucose = "glucose",
+  group = c("period", "treatment"),
+  stratum = "age_group",
+  cutoffs = cutoffs,
+  reference_by = c("age_group", "period"),
+  prior_strength = 20,
+  min_obs = 40
+)
+empirical_results
+```
+
+The empirical transition counts can be used without smoothing by setting
+`prior_strength = 0`. With smoothing, each count row receives pseudocounts
+proportional to the pooled transition probabilities in its reference stratum.
+
+## One fitted series
+
+```{r one-fit}
+one <- cgm[cgm$participant_id == "P001" & cgm$period == "rct", ]
+fit <- fit_hmm_cgm(
+  one$glucose,
+  one$timestamp,
+  templates,
+  stratum = one$age_group[1],
+  return_posterior = TRUE
+)
+fit$transition_matrix
+fit$mfpt[c("lower", "upper")]
+head(fit$posterior)
+```
+
+MFPT values are reported in minutes. Infinite values indicate that the fitted
+chain does not reach the middle state with probability one.
