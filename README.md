@@ -1,6 +1,6 @@
-# CGMmfpt
+# CGMbuHMM
 
-`CGMmfpt` implements the three-state continuous glucose monitoring (CGM)
+`CGMbuHMM` implements the three-state continuous glucose monitoring (CGM)
 methods used in our manuscript. It provides:
 
 - an empirical transition-matrix estimator based on hard glucose cutoffs;
@@ -19,7 +19,7 @@ After this folder is uploaded as a GitHub repository, install it with:
 
 ```r
 install.packages("remotes")
-remotes::install_github("YOUR_GITHUB_USERNAME/CGMmfpt")
+remotes::install_github("YOUR_GITHUB_USERNAME/CGMbuHMM")
 ```
 
 For local development, run:
@@ -50,7 +50,7 @@ methods, matching the analysis domain used in the manuscript.
 ## Quick start
 
 ```r
-library(CGMmfpt)
+library(CGMbuHMM)
 
 cgm <- simulate_cgm_data(
   n_participants = 8,
@@ -157,7 +157,7 @@ custom_templates <- fit_emission_templates(
 )
 ```
 
-`CGMmfpt` applies supplied cutoffs but does not optimize them. This keeps cutoff
+`CGMbuHMM` applies supplied cutoffs but does not optimize them. This keeps cutoff
 selection separate from transition and MFPT estimation and helps prevent using
 the same participant-period outcomes both to choose and evaluate thresholds.
 
@@ -189,7 +189,7 @@ testthat::test_local()
 
 A manuscript can cite the implementation with wording such as:
 
-> All analyses were implemented in R using the CGMmfpt package and
+> All analyses were implemented in R using the CGMbuHMM package and
 > author-written analysis scripts. The package source code is available at
 > [GitHub repository URL].
 
